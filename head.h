@@ -22,9 +22,10 @@
 #define ROW 26
 #define COL 30
 #define INF 20
+#define CHAR0 "+"
 #define CHAR1 "@"
 #define CHAR2 "X"
 #define LIFE1 10
 #define LIFE2 100
-#define BU1 "*"
-#define BU2 "^"
+#define BU1 "|"
+#define BU2 "*"

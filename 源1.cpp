@@ -41,7 +41,7 @@ int main()
 	wall.printWall();
 
 	Fighter fighter(wall);
-	fighter.showFighter();
+	fighter.initFighter();
 
 	Enemy enemy(wall);
 	enemy.initEnemy();
@@ -64,7 +64,7 @@ int main()
 			}
 			if (d++ % 5 == 0)
 			{
-				bullet.bulletGen2(enemy.m_vec.front());
+				bullet.bulletGen2();
 			}
 			if (b++ % 2 == 0)
 			{

@@ -12,16 +12,16 @@ void goto_xy1(int x, int y)
 class Fighter
 {
 public:
-	vector<pair<int, int>> m_vec;
 	Wall& m_wall;
+	vector<pair<int, int>> m_vec;
+	int m_life;
 
 public:
 	Fighter(Wall& _wall);
-	void createFighter(pair<int,int> _node);
-	void showFighter();
+	void createFighter(pair<int,int> _direct);
+	void initFighter();
 	void moveFighter(char _direction);
-	void shootFighter();
-	int getSpeed();
+	void showLife();
 };
 
 Fighter::Fighter(Wall& _wall):m_wall(_wall)
@@ -29,38 +29,8 @@ Fighter::Fighter(Wall& _wall):m_wall(_wall)
 	this->m_vec.clear();
 }
 
-void Fighter::createFighter(pair<int,int> _node)
+void Fighter::createFighter(pair<int,int> _direct)
 {
-	//for (auto node : this->m_vec)
-	//{
-	//	this->m_wall.setWall(node, " ");
-	//	goto_xy1(node.second * 2, node.first);
-	//	cout << " ";
-	//}
-	//this->m_vec.clear();
-
-	//int y = _node.first;
-	//int x = _node.second;
-	//this->m_vec.push_back(make_pair(y,x));
-	//this->m_vec.push_back(make_pair(y + 1, x - 1));
-	//this->m_vec.push_back(make_pair(y + 1, x));
-	//this->m_vec.push_back(make_pair(y + 1, x + 1));
-	//this->m_vec.push_back(make_pair(y + 2, x - 1));
-	//this->m_vec.push_back(make_pair(y + 2, x + 1));
-
-	//for (auto node : this->m_vec)
-	//{
-	//	this->m_wall.setWall(node, "+");
-	//}
-
-	//for (auto node : this->m_vec)
-	//{
-	//	goto_xy1(node.second * 2, node.first);
-	//	cout << "+";
-	//}
-
-	int y = _node.first;
-	int x = _node.second;
 	for (auto node : this->m_vec)
 	{
 		this->m_wall.setWall(node, " ");
@@ -68,90 +38,72 @@ void Fighter::createFighter(pair<int,int> _node)
 		cout << " ";
 	}
 
-	for (auto& node : this->m_vec)
+	for (auto& node : this->m_vec)     //这一步遍历时必须引用，要改变原坐标
 	{
-		node.first += y;
-		node.second += x;
+		node.first += _direct.first;
+		node.second += _direct.second;
 		this->m_wall.setWall(node, "+");
 		goto_xy1(node.second * 2, node.first);
 		cout << "+";
 	}
-
 }
 
-void Fighter::showFighter()
+void Fighter::initFighter()
 {
-	int y = ROW - 4;
-	int x = COL / 2;
-	this->m_vec.push_back(make_pair(y, x));
-	this->m_vec.push_back(make_pair(y + 1, x - 1));
-	this->m_vec.push_back(make_pair(y + 1, x));
-	this->m_vec.push_back(make_pair(y + 1, x + 1));
-	this->m_vec.push_back(make_pair(y + 2, x - 1));
-	this->m_vec.push_back(make_pair(y + 2, x + 1));
+	this->m_life = LIFE2;
+	int row = ROW - 4;
+	int col = COL / 2;
+	this->m_vec.push_back(make_pair(row, col));
+	this->m_vec.push_back(make_pair(row + 1, col - 1));
+	this->m_vec.push_back(make_pair(row + 1, col));
+	this->m_vec.push_back(make_pair(row + 1, col + 1));
+	this->m_vec.push_back(make_pair(row + 2, col - 1));
+	this->m_vec.push_back(make_pair(row + 2, col + 1));
 
 	for (auto node : this->m_vec)
 	{
-		this->m_wall.setWall(node, "+");
-	}
-
-	for (auto node : this->m_vec)
-	{
+		this->m_wall.setWall(node, CHAR0);
 		goto_xy1(node.second * 2, node.first);
-		cout << "+";
+		cout << CHAR0;
 	}
 }
 
 void Fighter::moveFighter(char _direction)
 {
-	//int y = this->m_vec.front().first;
-	//int x = this->m_vec.front().second;
-	//switch (_direction)
-	//{
-	//case 'w':
-	//	--y;
-	//	break;
-	//case 's':
-	//	++y;
-	//	break;
-	//case 'a':
-	//	--x;
-	//	break;
-	//case 'd':
-	//	++x;
-	//	break;
-	//default:
-	//	break;
-	//}
-	//if (x >= 2 && x <= INF - 2 && y >= 1 && y <= ROW - 4)
-	//{
-	//	this->createFighter(make_pair(y,x));
-	//}
-
-	//pair<int, int> direct;
-	int y = 0;
-	int x = 0;
+	pair<int, int> direct;
 	switch (_direction)
 	{
 	case 'w':
-		//direct = make_pair(-1, 0);
-		--y;
+		direct = make_pair(-1, 0);
 		break;
 	case 's':
-		++y;
+		direct = make_pair(1, 0);
 		break;
 	case 'a':
-		--x;
+		direct = make_pair(0, -1);
 		break;
 	case 'd':
-		++x;
+		direct = make_pair(0, 1);
 		break;
 	default:
 		break;
 	}
-	//if (x >= 2 && x <= INF - 2 && y >= 1 && y <= ROW - 4)
-	//{
-		this->createFighter(make_pair(y, x));
-	//}
 
+	int row = this->m_vec.front().first + direct.first;
+	int col = this->m_vec.front().second + direct.second;
+	if (col >= 2 && col <= INF - 2 && row >= 1 && row <= ROW - 4)
+	{
+		this->createFighter(direct);
+	}
+}
+
+void Fighter::showLife()
+{
+	goto_xy1(44, 10);                  //在指定位置实时输出血量信息
+	cout << this->m_life;
+	if (this->m_life == 0)
+	{
+		//this->delEnemy();
+		//this->initEnemy();
+	}
 }
